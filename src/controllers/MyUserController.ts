@@ -19,6 +19,21 @@ const getCurrentUser = async(req: Request, res:Response) => {
     }
 }
 
+
+// when we create a new user we already did a relation to link both userId and 
+// authId so now whenever we create a new user using auth0 we automatically 
+// habe authId but then we need to look for the newly created user in our 
+// database which is why we use auth0id since it is linked already and 
+// then we can simply use userId to do the necessary updates 
+
+
+// user logIn for the first time the systems checks if this user already exists in 
+// our database by using his authId and run it in the database, if we couldnt find
+// the user it means its a new user, by that time jwtparse wont be called as the
+// user hasnt logged in yet, after that a new user is created when a new user
+// is created we link authId and userId together so that we can have a way 
+// to look for users in our database when logged in to make sure its his/her only
+// account 
 const createCurrentUser = async(req: Request, res:Response) => {
     try{
         const {auth0Id} = req.body;
@@ -42,6 +57,11 @@ const createCurrentUser = async(req: Request, res:Response) => {
 // instead of using mongoDb userId which is _id we can use auth0Id to search 
 // for the user as we already had it in our user schema, we can get it from 
 // access token 
+
+// and this works since in the jwtparse we linked both the authId and userId 
+// from the statrt which means now we can use userId to find our Id since it 
+// is automatically linked with one another and we dont need to still look for it
+
 const updateCurrentUser = async(req: Request, res:Response) => {
     try{
         const {name, addressLine1, country, city} = req.body

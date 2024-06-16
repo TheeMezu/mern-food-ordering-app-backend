@@ -19,7 +19,6 @@ export const jwtCheck = auth({
   });
 
 
-
 // here basically it uses auth0Id to find the user logged in and then 
 // it saves mongoDb _id to know the user 
 export const jwtParse = async(req:Request, res:Response, next: NextFunction) => {
@@ -49,6 +48,15 @@ export const jwtParse = async(req:Request, res:Response, next: NextFunction) => 
 }
 
 
-// this allows us to check for the token with every route without me needing to 
-// do all logic, as we send the authorization header with the token
-// as it connects to auth0 server behind the scenes 
+// what happens is when we log in using Auth0 in the front end we return back 
+// after login where we then have a user that we can extract from Auth0, after 
+// we successfuly log in we can save the user Auth0 id and email in our 
+// backend by calling create user api and we can attach the token recieved from 
+// Auth0 after logging in and we can attach it to the header in Authorization 
+// parameter, after getting the header parameter we can save Auth0 Id that we
+// recieved and use it to find the user that has the same Auth0 Id by that we 
+// linked our database with our Auth0 and we can save it in the request.
+// we save it in the request so we can attach it as a middleware to our routes,
+// which then will give us access to them whenever we use the route which is 
+// always and we can also use it as an authentication which will guarentee us 
+// that the person on it is the correct user 
