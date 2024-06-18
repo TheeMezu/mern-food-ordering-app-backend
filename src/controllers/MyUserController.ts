@@ -15,7 +15,7 @@ const getCurrentUser = async(req: Request, res:Response) => {
     }
     catch(error){
         console.log(error);
-        res.status(500).json({messgae: "Error creating user"})
+        res.status(500).json({message: "Error creating user"})
     }
 }
 
@@ -50,7 +50,7 @@ const createCurrentUser = async(req: Request, res:Response) => {
     }
     catch(error){
         console.log(error);
-        res.status(500).json({messgae: "Error creating user"})
+        res.status(500).json({message: "Error creating user"})
     }
 }
 
@@ -78,7 +78,7 @@ const updateCurrentUser = async(req: Request, res:Response) => {
         user.country = country 
         await user.save()
 
-        res.send(user)
+        res.send(user) // already json 
     }
     catch(error){
         console.log(error);
