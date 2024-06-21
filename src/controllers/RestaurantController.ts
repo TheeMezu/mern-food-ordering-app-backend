@@ -1,6 +1,22 @@
 import { Request, Response } from "express";
 import Restaurant from "../models/restaurant";
 
+
+const getRestaurant = async(req: Request, res:Response) => {
+  try{
+    const restaurantId = req.params.restaurantId 
+    const restaurant = await Restaurant.findById(restaurantId)
+
+    if(!restaurant){
+      return res.status(404).json({message: "restaurant not found"})
+    }
+    res.json(restaurant)
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+}
+
 // when something is required we put it in the path but when it is optional
 // we put it in as query parameter
 
@@ -12,6 +28,7 @@ import Restaurant from "../models/restaurant";
 
 // we can use an any type for a query and the reason for that is it can be
 // very complicated to do a type for it as it may require multiple types
+
 const searchRestaurant = async (req: Request, res: Response) => {
   try {
     const city = req.params.city; //london
@@ -94,9 +111,12 @@ const searchRestaurant = async (req: Request, res: Response) => {
 
 
 export default {
-    searchRestaurant
+    searchRestaurant,
+    getRestaurant
 }
 
 
-// data fetched from mongoDb are already in json so we simply res.send 
-// objects and arrays we need to use res.json 
+// when we create something for the first time we send it in .json but when 
+// we update it we can simply .send it 
+
+// we also use send when the data being sent is not of type json in the headers

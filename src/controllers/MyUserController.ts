@@ -22,7 +22,7 @@ const getCurrentUser = async(req: Request, res:Response) => {
 
 // when we create a new user we already did a relation to link both userId and 
 // authId so now whenever we create a new user using auth0 we automatically 
-// habe authId but then we need to look for the newly created user in our 
+// have authId but then we need to look for the newly created user in our 
 // database which is why we use auth0id since it is linked already and 
 // then we can simply use userId to do the necessary updates 
 
@@ -34,12 +34,19 @@ const getCurrentUser = async(req: Request, res:Response) => {
 // is created we link authId and userId together so that we can have a way 
 // to look for users in our database when logged in to make sure its his/her only
 // account 
+
+// this works because when we create a user for the first time we only have an 
+// authId in the beginning, after loggin in we call createCurrentUser which 
+// will then use mongoDb to create a user which will then have a _id that 
+// we use later to check foe if the current user is the correct user 
 const createCurrentUser = async(req: Request, res:Response) => {
     try{
         const {auth0Id} = req.body;
         const exisitngUser = await User.findOne({auth0Id})
 
-        if(exisitngUser){ // if user exists return everything is okay
+        if(exisitngUser){ 
+            // if user exists return everything is okay and we use .send cuz
+            // the user is already in json 
             return res.status(200).send()
         }
 
@@ -78,7 +85,7 @@ const updateCurrentUser = async(req: Request, res:Response) => {
         user.country = country 
         await user.save()
 
-        res.send(user) // already json 
+        res.send(user) // already json from when we created it
     }
     catch(error){
         console.log(error);

@@ -47,16 +47,15 @@ export const jwtParse = async(req:Request, res:Response, next: NextFunction) => 
   }
 }
 
-
-// what happens is when we log in using Auth0 in the front end we return back 
-// after login where we then have a user that we can extract from Auth0, after 
-// we successfuly log in we can save the user Auth0 id and email in our 
-// backend by calling create user api and we can attach the token recieved from 
+// after we successfuly log in, we can save the user Auth0 id and email in our 
+// backend by calling create user api. then we attach the token recieved from 
 // Auth0 after logging in and we can attach it to the header in Authorization 
 // parameter, after getting the header parameter we can save Auth0 Id that we
-// recieved and use it to find the user that has the same Auth0 Id by that we 
-// linked our database with our Auth0 and we can save it in the request.
+// recieved and use it to find the user that has the same Auth0 Id that we 
+// linked in our database with our Auth0 and we can save it in the request body.
 // we save it in the request so we can attach it as a middleware to our routes,
 // which then will give us access to them whenever we use the route which is 
 // always and we can also use it as an authentication which will guarentee us 
-// that the person on it is the correct user 
+// that the person on it is the correct user. thus we will always have req
+// req.auth0Id = auth0Id as string;
+//  req.userId = user._id.toString()

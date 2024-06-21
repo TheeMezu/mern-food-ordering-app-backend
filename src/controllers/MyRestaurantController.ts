@@ -30,7 +30,9 @@ const createMyRestaurant = async (req: Request, res: Response) => {
     restaurant.lastUpdated = new Date();
     await restaurant.save();
 
-    res.status(201).send(restaurant);
+    // we use send as we are recieving formData and not a json which then 
+    // express will detect that and will place the appropiate header
+    res.status(201).send(restaurant); 
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Something went wrong" });

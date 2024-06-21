@@ -1,15 +1,22 @@
-import mongoose from "mongoose";
+import mongoose, { InferSchemaType } from "mongoose";
 
+// we explicity need to do this for menuItems because it is not exposed as a model 
+// as it is embedded inside the restaurant but if we need to use it outside 
+// we have to ensure that we have a type explicit for it to be exposed as a model
+// we added an id to make sure we have a reference whenever we use a type 
+// we added a default id to have the same behavoir of mongoose adding the id
+// otherwise it would expect an id whenever we create a menuItem 
 const menuItemSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true
+    _id: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        default: () => new mongoose.Types.ObjectId(),
     },
-    price: {
-        type: Number,
-        required: true
-    }
-})
+    name: { type: String, required: true },
+    price: { type: Number, required: true },
+});
+
+export type MenuItemType = InferSchemaType<typeof menuItemSchema>;
 
 const restaurantSchema = new mongoose.Schema({
     user: {
