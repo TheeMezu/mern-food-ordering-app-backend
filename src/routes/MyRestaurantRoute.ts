@@ -14,6 +14,22 @@ const upload = multer({
     },
 });
 
+router.get(
+    "/order", 
+    jwtCheck, 
+    jwtParse, 
+    MyRestaurantController.getMyRestaurantOrders)
+
+
+// patch usually used for updating only a small thing but put is when updating 
+// the entire thing
+router.patch(
+    "/order/:orderId/status",
+    jwtCheck,
+    jwtParse,
+    MyRestaurantController.updateOrderStatus);
+
+
 // this will check the request body for a property called imageFile which
 // multer will save it to memory and use multer for validation, it will then
 // append an image function 
@@ -26,11 +42,13 @@ router.post(
     MyRestaurantController.createMyRestaurant
 );
 
+
 router.put("/",
     upload.single("imageFile"),
     validateMyRestaurantRequest,
     jwtCheck,
     jwtParse, MyRestaurantController.updateMyRestaurant)
+
 
 router.get("/", jwtCheck, jwtParse, MyRestaurantController.getMyRestaurant)
 

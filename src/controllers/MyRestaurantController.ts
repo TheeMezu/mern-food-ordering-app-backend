@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Restaurant from "../models/restaurant";
 import cloudinary from "cloudinary";
 import mongoose from "mongoose";
+import Order from "../models/order";
 
 // here the first thing we do we check if a restaurant exists to a user as
 // we made that only one restaurant per user
@@ -72,6 +73,27 @@ const updateMyRestaurant = async(req:Request, res:Response) => {
   }
 }
 
+// we use the logged in user who has a restaurant, then we can use the restaurant id 
+// to check if there are orders for it and if yes we can populate to find all 
+// the details about the person who ordered
+const getMyRestaurantOrders = async (req: Request, res: Response) => {
+  try {
+    const restaurant = await Restaurant.findOne({ user: req.userId });
+    if (!restaurant) {
+      return res.status(404).json({ message: "restaurant not found" });
+    }
+
+    const orders = await Order.find({ restaurant: restaurant._id })
+      .populate("restaurant")
+      .populate("user");
+
+    res.json(orders);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "something went wrong" });
+  }
+};
+
 
 const getMyRestaurant = async (req: Request, res: Response) => {
   try{
@@ -88,6 +110,36 @@ const getMyRestaurant = async (req: Request, res: Response) => {
   }
 }
 
+
+const updateOrderStatus = async (req: Request, res: Response) => {
+    try {
+      const { orderId } = req.params;
+      const { status } = req.body;
+
+      const order = await Order.findById(orderId);
+      if (!order) {
+        return res.status(404).json({ message: "order not found" });
+      }
+
+      // here we are getting a restaurant id due to refer in restaurant model 
+      const restaurant = await Restaurant.findById(order.restaurant);
+
+      // here we are checking ig the logged in user is the creator of the 
+      // restaurant 
+      if (restaurant?.user?._id.toString() !== req.userId) {
+        return res.status(401).send();
+      }
+
+      order.status = status;
+      await order.save();
+
+      res.status(200).json(order);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "unable to update order status" });
+    }
+};
+
 const uploadImage = async(file: Express.Multer.File) => {
     const image = file
     const base64Image = Buffer.from(image.buffer).toString("base64");
@@ -101,7 +153,9 @@ const uploadImage = async(file: Express.Multer.File) => {
 export default {
   createMyRestaurant,
   getMyRestaurant,
-  updateMyRestaurant
+  updateMyRestaurant,
+  getMyRestaurantOrders,
+  updateOrderStatus
 };
 
 
